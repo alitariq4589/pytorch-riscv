@@ -132,7 +132,7 @@ jobs:
           USE_SYSTEM_BLAS=1
           USE_SYSTEM_LAPACK=1
           CMAKE_BUILD_TYPE=Release
-          MAX_JOBS=32
+          MAX_JOBS=64
           EOF
 
       - name: Build PyTorch
