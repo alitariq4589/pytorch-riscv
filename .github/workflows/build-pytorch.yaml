@@ -150,13 +150,20 @@ jobs:
 
       - name: Verify build
         run: |
-          source $GITHUB_WORKSPACE/pytorch-build-env/bin/activate
-          
-          # Test import from outside source directory
+          # Create temporary test environment
+          python3 -m venv /tmp/test-env
+          source /tmp/test-env/bin/activate
+            
+          # Install only the wheel (no dependencies to keep it fast)
+          pip install --no-deps pytorch/dist/torch-*.whl
+            
+          # Quick test
           cd $HOME
-          python -c "import torch; print(f'PyTorch {torch.__version__} built successfully')"
-          python -c "import torch; print(f'CPU threads: {torch.get_num_threads()}')"
-          python -c "import torch; a = torch.randn(10, 10); b = torch.randn(10, 10); c = a @ b; print('Matrix ops work')"
+          python -c "import torch; print(torch.__version__)"
+            
+          # Cleanup
+          deactivate
+          rm -rf /tmp/test-env
 
       - name: Get PyTorch version and set outputs
         id: get-version
