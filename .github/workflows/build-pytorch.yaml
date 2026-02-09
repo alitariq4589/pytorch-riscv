@@ -39,7 +39,11 @@ jobs:
             ccache \
             wget \
             curl
-
+      
+      - name: Clear ccache
+        run: |
+          ccache -C -z 2>/dev/null || true
+          rm -rf ~/.ccache ~/.cache/ccache
       - name: Checkout repo
         uses: actions/checkout@v4
 
