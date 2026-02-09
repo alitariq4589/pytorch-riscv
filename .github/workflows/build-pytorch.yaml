@@ -40,10 +40,16 @@ jobs:
             wget \
             curl
       
-      - name: Clear ccache
+      - name: Check environment
         run: |
-          ccache -C -z 2>/dev/null || true
-          rm -rf ~/.ccache ~/.cache/ccache
+          set -eux
+          uname -a
+          gcc --version
+          g++ --version
+          python3 --version
+          cmake --version
+          nproc
+          cat /etc/os-release
       - name: Checkout repo
         uses: actions/checkout@v4
 
