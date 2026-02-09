@@ -151,8 +151,7 @@ jobs:
       - name: Verify build
         run: |
           # Create temporary test environment
-          python3 -m venv /tmp/test-env
-          source /tmp/test-env/bin/activate
+          source $GITHUB_WORKSPACE/pytorch-build-env/bin/activate
             
           # Install only the wheel (no dependencies to keep it fast)
           pip install --no-deps pytorch/dist/torch-*.whl
