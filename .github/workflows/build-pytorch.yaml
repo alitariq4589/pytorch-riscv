@@ -40,16 +40,6 @@ jobs:
             wget \
             curl
       
-      - name: Check environment
-        run: |
-          set -eux
-          uname -a
-          gcc --version
-          g++ --version
-          python3 --version
-          cmake --version
-          nproc
-          cat /etc/os-release
       - name: Checkout repo
         uses: actions/checkout@v4
 
@@ -184,15 +174,14 @@ jobs:
           WHEEL_FILE=$(ls $GITHUB_WORKSPACE/pytorch/dist/torch-*.whl | head -1)
           WHEEL_BASENAME=$(basename $WHEEL_FILE)
           
-          # Create standardized asset name
-          ASSET_NAME="pytorch-${PYTORCH_VERSION}-cp313-cp313-linux_riscv64.whl"
-          ASSET_PATH="$GITHUB_WORKSPACE/build_output/${ASSET_NAME}"
+          # Use the ACTUAL wheel filename (don't rename it)
+          ASSET_PATH="$GITHUB_WORKSPACE/build_output/${WHEEL_BASENAME}"
           
-          # Copy wheel to standardized name
+          # Copy wheel to build_output
           cp $WHEEL_FILE $ASSET_PATH
           
           echo "release_name=PyTorch ${PYTORCH_VERSION} RISC-V" >> $GITHUB_OUTPUT
-          echo "asset_name=$ASSET_NAME" >> $GITHUB_OUTPUT
+          echo "asset_name=$WHEEL_BASENAME" >> $GITHUB_OUTPUT
           echo "asset_path=$ASSET_PATH" >> $GITHUB_OUTPUT
           echo "pytorch_version=$PYTORCH_VERSION" >> $GITHUB_OUTPUT
 
@@ -228,6 +217,7 @@ jobs:
         run: |
           TAG=${{ steps.get-latest-tag.outputs.tag_name }}
           VERSION=${{ steps.get-version.outputs.pytorch_version }}
+          PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1-2)
           
           cat > release_notes.md << EOF
           # PyTorch ${VERSION} for RISC-V Architecture
@@ -238,7 +228,7 @@ jobs:
           - **Source:** Official PyTorch repository (pytorch/pytorch)
           - **Tag:** ${TAG}
           - **Architecture:** riscv64
-          - **Python:** 3.13
+          - **Python:** ${PYTHON_VERSION}
           - **Build Type:** CPU-only with OpenMP and OpenBLAS
           - **Build Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           
@@ -253,7 +243,7 @@ jobs:
           ## Installation
           
           \`\`\`bash
-          # Install on RISC-V system with Python 3.13
+          # Install on RISC-V system with Python ${PYTHON_VERSION}
           pip install ${{ steps.get-version.outputs.asset_name }}
           
           # Verify installation
@@ -263,7 +253,7 @@ jobs:
           ## System Requirements
           - RISC-V 64-bit processor
           - Linux operating system
-          - Python 3.13
+          - Python ${PYTHON_VERSION}
           - glibc 2.31 or newer
           - At least 2GB RAM for basic usage
           
