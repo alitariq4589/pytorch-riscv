@@ -147,17 +147,7 @@ jobs:
           python setup.py bdist_wheel 2>&1 | tee $GITHUB_WORKSPACE/build.log
           
           echo "Build completed at $(date)"
-      - name: Run Test Suite
-        run: |
-          source $GITHUB_WORKSPACE/pytorch-build-env/bin/activate
-          cd pytorch
-          
-          echo "Running PyTorch test suite at $(date)"
-          python test/run_test.py --verbose \
-            --include test_torch test_nn test_autograd
-
-          
-          
+      
       - name: Verify build
         run: |
           # Create temporary test environment
@@ -173,6 +163,15 @@ jobs:
           # Cleanup
           deactivate
           rm -rf /tmp/test-env
+          
+      - name: Run Test Suite
+        run: |
+          source $GITHUB_WORKSPACE/pytorch-build-env/bin/activate
+          cd pytorch
+          
+          echo "Running PyTorch test suite at $(date)"
+          python test/run_test.py --verbose \
+            --include test_torch test_nn test_autograd
 
       - name: Get PyTorch version and set outputs
         id: get-version
