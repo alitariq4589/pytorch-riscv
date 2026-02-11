@@ -169,6 +169,8 @@ jobs:
           source $GITHUB_WORKSPACE/pytorch-build-env/bin/activate
           cd pytorch
           
+          pip install expecttest hypothesis pytest pytest-xdist
+
           echo "Running PyTorch test suite at $(date)"
           python test/run_test.py --verbose \
             --include test_torch test_nn test_autograd
