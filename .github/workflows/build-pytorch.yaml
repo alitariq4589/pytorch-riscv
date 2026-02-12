@@ -169,7 +169,7 @@ jobs:
           source $GITHUB_WORKSPACE/pytorch-build-env/bin/activate
           cd pytorch
           
-          pip install expecttest hypothesis pytest pytest-xdist
+          pip install -r .ci/docker/requirements-ci.txt
 
           echo "Running PyTorch test suite at $(date)"
           python test/run_test.py --verbose \
